@@ -32,4 +32,23 @@ route.post('/', async (req, res) => {
     }
 })
 
+route.put('/:id', async (req, res) => {
+    if (!req.body.description || !req.body.notes) {
+        res.status(400).json({message:"Please provide description and notes"})
+    } else {
+        try {
+            const newAction = await db('actions').where({id:req.params.id}).update(req.body)
+            res.status(200).json({message:"success", updated:newAction});
+        } catch (error) {
+            res.status(500).json({error})
+        }   
+    }
+})
+
+route.delete('/:id', (req, res) => {
+    db('actions').where({id:req.params.id}).del()
+    .then(response => res.status(204).end())
+    .catch(err => res.status(500).json(err))
+})
+
 module.exports = route;
