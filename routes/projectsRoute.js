@@ -21,6 +21,16 @@ route.get('/:id', async (req, res) => {
     }
 })
 
+route.get('/:id/actions', async (req, res) => {
+    try {
+        const project = await db('projects').where({id:req.params.id}).first()
+        const projectActions = await db('actions').where({project_id:req.params.id})
+        res.status(200).json({...project, actions:projectActions})
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
+
 route.post('/', async (req, res) => {
     if (!req.body.name || !req.body.description) {
         res.status(400).json({message: "Please provide project name and description."})
